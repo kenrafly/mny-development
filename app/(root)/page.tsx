@@ -5,6 +5,7 @@ import AllDonghuasGrid from "@/components/List/List";
 import Footer from "@/components/Footer/Footer";
 import SubscriptionPlans from "@/components/Pricing/Pricing";
 import Navbar from "@/components/Navbar/Navbar";
+import SampePage from "@/components/Cloudinary/page";
 
 const page = () => {
   return (
@@ -15,6 +16,7 @@ const page = () => {
         <Top10Movies />
         <SubscriptionPlans />
         <AllDonghuasGrid />
+        <SampePage />
         <Footer />
       </Suspense>
     </div>
