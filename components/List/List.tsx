@@ -2,33 +2,44 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import titlesList from "@/constants/list";
+
+interface Movie {
+  _id: string;
+  title: string;
+  description: string;
+  image: string;
+}
 
 const AllDonghuasGrid = () => {
   const itemsPerPage = 15;
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get("search")?.toLowerCase() || "";
 
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const filteredTitles = titlesList.filter((title) =>
-    title.toLowerCase().includes(searchTerm)
+  useEffect(() => {
+    const fetchMovies = async () => {
+      const res = await fetch("/api/movies");
+      const data = await res.json();
+      setMovies(data);
+    };
+    fetchMovies();
+  }, []);
+
+  const filteredMovies = movies.filter((movie) =>
+    movie.title.toLowerCase().includes(searchTerm)
   );
 
-  const totalPages = Math.ceil(filteredTitles.length / itemsPerPage);
-
-  const getDonghuaSrc = (index: number) => {
-    return `/allDonghuas/donghua (${index + 1}).jpg`;
-  };
-
+  const totalPages = Math.ceil(filteredMovies.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems = filteredTitles.slice(
+  const currentItems = filteredMovies.slice(
     startIndex,
     startIndex + itemsPerPage
   );
 
   useEffect(() => {
-    setCurrentPage(1); // Reset to first page when search changes
+    setCurrentPage(1); // Reset page when search changes
   }, [searchTerm]);
 
   return (
@@ -42,30 +53,23 @@ const AllDonghuasGrid = () => {
       )}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-        {currentItems.map((title, idx) => {
-          const originalIndex = titlesList.indexOf(title);
-          return (
-            <div
-              key={`${originalIndex}-${idx}`}
-              className="flex flex-col items-center"
-            >
-              <div className="relative aspect-[2/3] w-full rounded overflow-hidden">
-                <Image
-                  src={getDonghuaSrc(originalIndex)}
-                  alt={title}
-                  fill
-                  className="object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
-                />
-              </div>
-              <p className="mt-2 text-center text-sm text-white line-clamp-2">
-                {title}
-              </p>
+        {currentItems.map((movie) => (
+          <div key={movie._id} className="flex flex-col items-center">
+            <div className="relative aspect-[2/3] w-full rounded overflow-hidden">
+              <Image
+                src={movie.image}
+                alt={movie.title}
+                fill
+                className="object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+              />
             </div>
-          );
-        })}
+            <p className="mt-2 text-center text-sm text-white line-clamp-2">
+              {movie.title}
+            </p>
+          </div>
+        ))}
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center mt-6 gap-4">
           <button
