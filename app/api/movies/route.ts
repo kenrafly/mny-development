@@ -20,7 +20,7 @@ export async function GET() {
 
     if (movies.length === 0) {
       const cloudRes = await cloudinary.search
-        .expression("folder:allDonghuas AND resource_type:image")
+        .expression("folder:donghuas AND resource_type:image")
         .sort_by("public_id", "asc")
         .max_results(200)
         .execute();
