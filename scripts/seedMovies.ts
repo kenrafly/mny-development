@@ -1,6 +1,6 @@
 import "dotenv/config"; // 🔥 Loads .env into process.env
 import { connectDB } from "@/lib/mongoose";
-import { Movie } from "@/lib/models/Movie";
+import { Movie } from "@/lib/models/movie";
 const movies = [
   {
     title: "Honor of King: Chapter of Glory",
