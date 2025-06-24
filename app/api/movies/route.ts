@@ -8,7 +8,11 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY!,
   api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
-
+interface CloudinaryResource {
+  asset_id: string;
+  public_id: string;
+  secure_url: string;
+}
 export async function GET() {
   try {
     await connectDB();
@@ -21,9 +25,12 @@ export async function GET() {
         .max_results(200)
         .execute();
 
-      movies = cloudRes.resources.map((item: any) => ({
+      const resources: CloudinaryResource[] = cloudRes.resources;
+
+      movies = resources.map((item) => ({
         _id: item.asset_id,
-        title: item.public_id.split("/").pop().replace(/[-_]/g, " "),
+        title:
+          item.public_id.split("/").pop()?.replace(/[-_]/g, " ") || "Untitled",
         description: "",
         image: item.secure_url,
       }));
