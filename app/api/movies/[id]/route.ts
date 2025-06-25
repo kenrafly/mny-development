@@ -1,6 +1,7 @@
+// app/api/movies/[id]/route.ts
 import { connectDB } from "@/lib/mongoose";
-import { Movie } from "@/lib/models/Movie"; // ✅ You forgot this import
-import { v2 as cloudinary } from "cloudinary"; // ✅ You also need to configure Cloudinary
+import { Movie } from "@/lib/models/Movie";
+import { v2 as cloudinary } from "cloudinary";
 import { NextResponse } from "next/server";
 
 cloudinary.config({
@@ -21,19 +22,16 @@ export async function DELETE(
       return NextResponse.json({ error: "Movie not found" }, { status: 404 });
     }
 
-    // ✅ Delete from Cloudinary using stored public_id
     if (movie.public_id) {
       await cloudinary.uploader.destroy(movie.public_id);
     }
 
-    // ✅ Delete from MongoDB
     await Movie.findByIdAndDelete(params.id);
 
     return NextResponse.json({ message: "Deleted successfully" });
-  } catch (err) {
-    console.error("DELETE error:", err);
+  } catch (error) {
     return NextResponse.json(
-      { error: "Failed to delete movie", details: err },
+      { error: "Failed to delete", details: (error as Error).message },
       { status: 500 }
     );
   }
