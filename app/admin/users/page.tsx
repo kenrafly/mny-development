@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import AddUserModal from "@/components/admin/AddUserModal/AddUserModal"; // Make sure this exists
+import AddUserModal from "@/components/admin/AddUserModal/AddUserModal";
+import EditUserModal from "@/components/admin/EditModalUser/EditModalUser"; // ✅ import your Edit modal
 import { DataTable } from "@/components/admin/tableUser/Shadcn";
-import { getUserColumns } from "@/components/admin/tableUser/Columns"; // Make sure this exists
+import { getUserColumns } from "@/components/admin/tableUser/Columns";
 
-// ✅ Define User type here or import it if defined elsewhere
 export interface User {
   _id: string;
   user: string;
@@ -18,7 +18,9 @@ export interface User {
 const Page = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [addOpen, setAddOpen] = useState(false); // modal state
+  const [addOpen, setAddOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false); // ✅ state for Edit modal
+  const [selectedUser, setSelectedUser] = useState<User | null>(null); // ✅ store user being edited
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -39,8 +41,17 @@ const Page = () => {
     }
   };
 
+  const handleEdit = (user: User) => {
+    setSelectedUser(user);
+    setEditOpen(true);
+  };
+
   const handleAddUser = (user: User) => {
     setUsers((prev) => [user, ...prev]);
+  };
+
+  const handleSaveUser = (updated: User) => {
+    setUsers((prev) => prev.map((u) => (u._id === updated._id ? updated : u)));
   };
 
   return (
@@ -54,7 +65,7 @@ const Page = () => {
       </div>
 
       <DataTable
-        columns={getUserColumns(handleDelete)}
+        columns={getUserColumns(handleEdit, handleDelete)} // ✅ pass handleEdit
         data={users}
         loading={loading}
       />
@@ -63,6 +74,13 @@ const Page = () => {
         open={addOpen}
         onClose={() => setAddOpen(false)}
         onAdd={handleAddUser}
+      />
+
+      <EditUserModal
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        userData={selectedUser}
+        onSave={handleSaveUser}
       />
     </div>
   );

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { User } from "@/app/admin/users/page";
 
 export const getUserColumns = (
+  handleEdit: (user: User) => void,
   handleDelete: (id: string) => void
 ): ColumnDef<User, unknown>[] => [
   {
@@ -36,6 +37,19 @@ export const getUserColumns = (
         <div className="text-sm text-gray-400">{date.toLocaleDateString()}</div>
       );
     },
+  },
+  {
+    id: "edit",
+    header: "Edit",
+    cell: ({ row }) => (
+      <Button
+        variant="outline"
+        className="text-sm text-blue-600"
+        onClick={() => handleEdit(row.original)}
+      >
+        Edit
+      </Button>
+    ),
   },
   {
     id: "delete",
