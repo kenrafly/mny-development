@@ -9,60 +9,57 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { User } from "@/app/admin/users/page"; // adjust if needed
+import { useState } from "react";
+import { User } from "@/app/admin/users/page"; // adjust this path if needed
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  userData: User | null;
-  onSave: (updated: User) => void;
+  onAdd: (user: User) => void;
 }
 
-export default function EditUserModal({
-  open,
-  onClose,
-  userData,
-  onSave,
-}: Props) {
+export default function AddUserModal({ open, onClose, onAdd }: Props) {
   const [username, setUsername] = useState("");
-  const [dateJoined, setDateJoined] = useState("");
-  const [dateEnded, setDateEnded] = useState("");
   const [plan, setPlan] = useState<"1 month" | "2 months" | "3 months">(
     "1 month"
   );
-
-  useEffect(() => {
-    if (userData) {
-      setUsername(userData.user);
-      setDateJoined(userData.dateJoined.slice(0, 10)); // YYYY-MM-DD
-      setDateEnded(userData.dateEnded.slice(0, 10));
-      setPlan(userData.plan);
-    }
-  }, [userData]);
+  const [dateJoined, setDateJoined] = useState("");
+  const [dateEnded, setDateEnded] = useState("");
 
   const handleSubmit = async () => {
-    if (!userData) return;
+    if (!username || !dateJoined || !dateEnded) {
+      alert("Please fill in all fields.");
+      return;
+    }
 
-    const updated: User = {
-      ...userData,
+    const newUser = {
       user: username,
+      plan,
       dateJoined: new Date(dateJoined).toISOString(),
       dateEnded: new Date(dateEnded).toISOString(),
-      plan,
     };
 
-    const res = await fetch(`/api/users/${userData._id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    });
+    try {
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newUser),
+      });
 
-    if (res.ok) {
-      onSave(updated);
+      if (!res.ok) throw new Error("Failed to add user");
+
+      const data = await res.json();
+      onAdd(data);
       onClose();
-    } else {
-      console.error("Failed to update user");
+
+      // Reset form fields
+      setUsername("");
+      setDateJoined("");
+      setDateEnded("");
+      setPlan("1 month");
+    } catch (error) {
+      console.error("Add failed:", error);
+      alert("Something went wrong.");
     }
   };
 
@@ -70,37 +67,52 @@ export default function EditUserModal({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="bg-[#0e0f1a] text-white">
         <DialogHeader>
-          <DialogTitle>Edit User</DialogTitle>
+          <DialogTitle>Add User</DialogTitle>
         </DialogHeader>
+
         <div className="space-y-4">
           <Input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Username"
           />
-          <Input
-            type="date"
-            value={dateJoined}
-            onChange={(e) => setDateJoined(e.target.value)}
-          />
-          <Input
-            type="date"
-            value={dateEnded}
-            onChange={(e) => setDateEnded(e.target.value)}
-          />
-          <select
-            value={plan}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            onChange={(e) => setPlan(e.target.value as any)}
-            className="w-full bg-[#1a1b2e] p-2 rounded text-white"
-          >
-            <option value="1 month">1 month</option>
-            <option value="2 months">2 months</option>
-            <option value="3 months">3 months</option>
-          </select>
+
+          <label className="block">
+            <span className="text-sm text-gray-300">Date Joined</span>
+            <Input
+              type="date"
+              value={dateJoined}
+              onChange={(e) => setDateJoined(e.target.value)}
+            />
+          </label>
+
+          <label className="block">
+            <span className="text-sm text-gray-300">Date Ended</span>
+            <Input
+              type="date"
+              value={dateEnded}
+              onChange={(e) => setDateEnded(e.target.value)}
+            />
+          </label>
+
+          <label className="block">
+            <span className="text-sm text-gray-300">Plan</span>
+            <select
+              className="w-full rounded bg-[#1c1c2a] p-2 text-white"
+              value={plan}
+              onChange={(e) =>
+                setPlan(e.target.value as "1 month" | "2 months" | "3 months")
+              }
+            >
+              <option value="1 month">1 month</option>
+              <option value="2 months">2 months</option>
+              <option value="3 months">3 months</option>
+            </select>
+          </label>
         </div>
+
         <DialogFooter className="pt-4">
-          <Button onClick={handleSubmit}>Save</Button>
+          <Button onClick={handleSubmit}>Add</Button>
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
