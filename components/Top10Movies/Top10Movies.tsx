@@ -1,10 +1,19 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+interface Movie {
+  _id: string;
+  title: string;
+  description: string;
+  rank: number;
+  image: string;
+}
+
 const Top10Movies = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [movies, setMovies] = useState<Movie[]>([]);
 
   const scroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return;
@@ -12,10 +21,14 @@ const Top10Movies = () => {
     scrollRef.current.scrollBy({ left: amount, behavior: "smooth" });
   };
 
-  const movies = Array.from({ length: 10 }, (_, i) => ({
-    rank: i + 1,
-    src: `/top-10/top (${i + 1}).jpg`,
-  }));
+  useEffect(() => {
+    const fetchMovies = async () => {
+      const res = await fetch("/api/top10");
+      const data = await res.json();
+      setMovies(data);
+    };
+    fetchMovies();
+  }, []);
 
   return (
     <section className="relative px-12 py-8">
@@ -54,7 +67,7 @@ const Top10Movies = () => {
 
             {/* Thumbnail Image */}
             <Image
-              src={movie.src}
+              src={movie.image}
               alt={`Top ${movie.rank}`}
               fill
               className="rounded-md object-cover"
@@ -62,7 +75,7 @@ const Top10Movies = () => {
 
             {/* Optional title */}
             <p className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black/60 px-2 py-1 rounded">
-              Top {movie.rank}
+              Top {movie.title}
             </p>
           </div>
         ))}
