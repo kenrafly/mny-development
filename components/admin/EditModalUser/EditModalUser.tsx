@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import type { User } from "@/app/admin/users/page";
 
 export interface UserType {
   _id: string;
@@ -51,7 +52,7 @@ export default function EditUserModal({
   const handleSubmit = async () => {
     if (!userData) return;
 
-    const updated: UserType = {
+    const updated: User = {
       ...userData,
       user,
       dateJoined: new Date(dateJoined).toISOString(),
@@ -59,7 +60,7 @@ export default function EditUserModal({
       plan,
     };
 
-    const res = await fetch(`/api/users/${userData._id}`, {
+    const res = await fetch(`/api/users`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updated),

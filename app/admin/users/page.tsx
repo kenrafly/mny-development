@@ -35,9 +35,17 @@ const Page = () => {
   const handleDelete = async (id: string) => {
     const confirmed = confirm("Are you sure?");
     if (!confirmed) return;
-    const res = await fetch(`/api/users/${id}`, { method: "DELETE" });
+
+    const res = await fetch("/api/users", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+
     if (res.ok) {
       setUsers((prev) => prev.filter((u) => u._id !== id));
+    } else {
+      console.error("Failed to delete user");
     }
   };
 

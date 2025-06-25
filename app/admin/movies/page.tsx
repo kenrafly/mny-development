@@ -34,9 +34,17 @@ const Page = () => {
   const handleDelete = async (id: string) => {
     const confirmed = confirm("Are you sure?");
     if (!confirmed) return;
-    const res = await fetch(`/api/movies/${id}`, { method: "DELETE" });
+
+    const res = await fetch("/api/movies", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+
     if (res.ok) {
       setMovies((prev) => prev.filter((m) => m._id !== id));
+    } else {
+      console.error("Failed to delete movie");
     }
   };
 

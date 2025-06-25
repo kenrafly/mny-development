@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { connectDB } from "@/lib/mongoose";
 import { Movie } from "@/lib/models/Movie";
@@ -69,5 +69,30 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("POST /api/movies error:", error);
     return NextResponse.json({ error: "Failed to add movie" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    await connectDB();
+    const { id } = await req.json();
+
+    const movie = await Movie.findById(id);
+    if (!movie) {
+      return NextResponse.json({ error: "Movie not found" }, { status: 404 });
+    }
+
+    if (movie.public_id) {
+      await cloudinary.uploader.destroy(movie.public_id);
+    }
+
+    await Movie.findByIdAndDelete(id);
+
+    return NextResponse.json({ message: "Deleted successfully" });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to delete", details: (error as Error).message },
+      { status: 500 }
+    );
   }
 }
