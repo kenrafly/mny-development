@@ -44,3 +44,30 @@ export async function GET() {
     );
   }
 }
+
+export async function POST(req: Request) {
+  try {
+    await connectDB();
+    const body = await req.json();
+    const { title, description, image, public_id } = body;
+
+    if (!title || !image || !public_id) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const newMovie = await Movie.create({
+      title,
+      description,
+      image,
+      public_id,
+    });
+
+    return NextResponse.json(newMovie);
+  } catch (error) {
+    console.error("POST /api/movies error:", error);
+    return NextResponse.json({ error: "Failed to add movie" }, { status: 500 });
+  }
+}
