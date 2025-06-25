@@ -33,7 +33,6 @@ const Navbar = () => {
             <h1 className="hidden md:block text-white">Donghua</h1>
             <Image src="/logo.svg" width={40} height={40} alt="" />
           </Link>
-
           <div className="hidden max-md:flex">
             <select
               onChange={handleSelectChange}
@@ -51,9 +50,6 @@ const Navbar = () => {
             </select>
           </div>
           <div className="hidden md:flex gap-2 pl-4">
-            <Link href="/about-us" className="hover:text-yellow-300">
-              About Us
-            </Link>
             <Link href="/list" className="hover:text-yellow-300">
               List
             </Link>
