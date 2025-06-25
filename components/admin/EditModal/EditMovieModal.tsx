@@ -47,14 +47,23 @@ export default function EditMovieModal({
 
   const handleSubmit = async () => {
     if (!movie) return;
-    const updated = { ...movie, title, description, image };
-    const res = await fetch(`/api/movies/${movie._id}`, {
+
+    const updatedMovie: Movie = {
+      ...movie,
+      title,
+      description,
+      image, // Make sure this comes from Cloudinary or the form
+    };
+
+    const res = await fetch("/api/movies", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
+      body: JSON.stringify(updatedMovie),
     });
+
     if (res.ok) {
-      onSave(updated);
+      const data = await res.json();
+      onSave(data); // use response to update UI
       onClose();
     } else {
       console.error("Failed to update movie");

@@ -44,6 +44,34 @@ export async function GET() {
     );
   }
 }
+export async function PUT(req: NextRequest) {
+  try {
+    await connectDB();
+    const body = await req.json();
+
+    const updatedMovie = await Movie.findByIdAndUpdate(
+      body._id,
+      {
+        title: body.title,
+        description: body.description,
+        image: body.image,
+        public_id: body.public_id, // include this if you're updating Cloudinary ID too
+      },
+      { new: true }
+    );
+
+    if (!updatedMovie) {
+      return NextResponse.json({ error: "Movie not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(updatedMovie);
+  } catch (err) {
+    return NextResponse.json(
+      { error: "Failed to update movie", details: (err as Error).message },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(req: Request) {
   try {
