@@ -45,9 +45,6 @@ const Navbar = () => {
               <option className="bg-gray-800 text-white" value="/">
                 Home
               </option>
-              <option className="bg-gray-800 text-white" value="/about-us">
-                About Us
-              </option>
               <option className="bg-gray-800 text-white" value="/list">
                 List
               </option>

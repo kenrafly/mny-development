@@ -75,7 +75,7 @@ const Top10Movies = () => {
 
             {/* Optional title */}
             <p className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black/60 px-2 py-1 rounded">
-              Top {movie.title}
+              {movie.title}
             </p>
           </div>
         ))}

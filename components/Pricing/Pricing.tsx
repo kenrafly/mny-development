@@ -1,6 +1,5 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { FaCheckCircle } from "react-icons/fa";
 
 const plans = [
   {
@@ -22,15 +21,11 @@ const plans = [
     duration: "/month",
   },
 ];
-
 const features = [
-  "Jasa yang disediakann",
-  "Jasa yang disediakann",
-  "Jasa yang disediakann",
-  "Jasa yang disediakann",
-  "Jasa yang disediakann",
-  "Jasa yang disediakann",
-  "Jasa yang disediakann",
+  "👌 TANPA IKLAN 👌",
+  "🙈 Bisa di simpan ke galeri",
+  "🙈 Upload lebih diutamakan",
+  "🙈 Tersedia Resolusi 480 - 1080 & 4K (Tergantung dari rilisnya)",
 ];
 
 const SubscriptionPlans = () => {
@@ -78,9 +73,9 @@ const SubscriptionPlans = () => {
                 </button>
 
                 <ul className="space-y-2 w-full">
+                  <h1 className="text-center font-bold">BENEFIT</h1>
                   {features.map((feature, i) => (
                     <li key={i} className="flex items-center gap-2 text-sm">
-                      <FaCheckCircle className="text-white text-xs" />
                       {feature}
                     </li>
                   ))}
