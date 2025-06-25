@@ -22,7 +22,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`${rakkas.className} border-b border-gray-700 bg-black p-4 px-4  md:px-12 fixed top-0 left-0 w-full z-50`}
+      className={`${rakkas.className} border-b border-gray-700 text-white bg-black p-4 px-4  md:px-12 fixed top-0 left-0 w-full z-50`}
     >
       <div className="flex justify-between">
         <div className="flex items-center gap-2">

@@ -51,7 +51,7 @@ const Hero = () => {
   const currentSlide = videoSlides[current];
 
   return (
-    <section className="relative w-full h-screen overflow-hidden pt-20 pl-4 md:pl-12">
+    <section className="relative w-full h-screen overflow-hidden pt-20 pl-4 md:pl-12 text-white">
       {/* Background video */}
       <video
         key={currentSlide.src}
